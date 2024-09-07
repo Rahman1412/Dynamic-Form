@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Validator;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Response;
 
 class HomeController extends Controller
 {
@@ -26,6 +28,16 @@ class HomeController extends Controller
                 'code'   => 'validation_error',
                 'error'  => $validate->errors()
             ],400);
+        }
+
+        DB::beginTransaction();
+        try{
+            throw new \Exception("New Error");
+        }catch(Exception $e){
+            return response([
+                "status" => false,
+                "message" -> $e->getMessage()
+            ],Response::HTTP_BAD_REQUEST);
         }
     }
 }

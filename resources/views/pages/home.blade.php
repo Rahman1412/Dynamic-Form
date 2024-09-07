@@ -5,9 +5,14 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between p-3">
         <h3>All Items</h3>
-        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">
-            Add New Item
-        </button>
+        <div>
+            <button class="btn btn-primary" type="button" onclick="toggleModel()">
+                Add New Item
+            </button>
+            <a class="btn btn-primary text-white" href="{{ url('auth') }}">
+                Auth
+            </a>
+        </div>
     </div>
 </div>
 
@@ -92,6 +97,7 @@
                     console.log("Response",resp);
                 },
                 error:function(err){
+                    console.log("ERROR",err);
                     handleButton(false);
                     let response = err.responseJSON
                     let error = response?.error;
@@ -149,7 +155,7 @@
                     <input type='text' class='form-control' placeholder='Amount' name='price[]'>\
                 </td>\
                 <td>\
-                    <input type='file' class='form-control' accept='image/*' name='file[]' multiple=''>\
+                    <input type='file' class='form-control' accept='image/*' name='file[]' onchange='previewImage(this)'>\
                 </td>\
                 <td>\
                     <Button class='btn btn-danger' type='button' onclick='remove(this)'>\
@@ -167,7 +173,7 @@
                     <input type='text' class='form-control' placeholder='Amount' name='price[]'>\
                 </td>\
                 <td>\
-                    <input type='file' class='form-control' accept='image/*' name='file[]' multiple=''>\
+                    <input type='file' class='form-control' accept='image/*' name='file[]' onchange='previewImage(this)'>\
                 </td>\
                 <td>\
                     <Button class='btn btn-primary' type='button' onclick='addMore(this)'>\
@@ -182,6 +188,27 @@
     function remove(element){
         i--;
         $(element).closest("tr").remove();
+    }
+
+    function previewImage(element){
+
+        let img = element.previousElementSibling;
+        
+        // If no image exists, create one
+        if (!img || img.tagName !== 'IMG') {
+            img = document.createElement('img');
+            img.style.width = '200px'; // Set the width to 200px
+            img.style.height = '200px'; // Set the height to 200px
+            element.before(img); // Insert the new image before the input
+        }
+
+        if (element.files && element.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result; // Update the image source with the new file
+            };
+            reader.readAsDataURL(element.files[0]); // Read the file as a data URL
+        }
     }
     </script>
 @endsection
